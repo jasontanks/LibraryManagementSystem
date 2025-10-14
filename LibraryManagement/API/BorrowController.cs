@@ -10,6 +10,7 @@ namespace LibraryManagement.API.Controllers;
 
 [ApiController]
 [Route("v1/borrow")]
+[Produces("application/json")]
 public class BorrowController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -45,9 +46,9 @@ public class BorrowController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Summary = "Marks a borrowed book as returned.")]
-    public async Task<IActionResult> ReturnBook(Guid borrowId)
+    public async Task<IActionResult> ReturnBook(Guid id)
     {
-        var command = new ReturnBookCommand { BorrowId = borrowId };
+        var command = new ReturnBookCommand { Id = id };
         var result = await _mediator.Send(command);
 
         return result ? NoContent() : NotFound();

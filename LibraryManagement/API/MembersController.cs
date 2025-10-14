@@ -10,6 +10,7 @@ namespace LibraryManagement.API.Controllers;
 
 [ApiController]
 [Route("v1/[controller]")]
+[Produces("application/json")]
 public class MembersController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -73,7 +74,7 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> RegisterMember([FromBody] RegisterMemberCommand command)
     {
         var memberDto = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetMemberById), new { id = memberDto.Id }, memberDto);
+        return CreatedAtAction(nameof(GetMemberById), new { memberId = memberDto.Id }, memberDto);
     }
 
     [HttpPut("{memberId}")]

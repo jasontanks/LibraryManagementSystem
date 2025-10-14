@@ -16,7 +16,7 @@ public class ReturnBookCommandHandler : IRequestHandler<ReturnBookCommand, bool>
 
     public async Task<bool> Handle(ReturnBookCommand request, CancellationToken cancellationToken)
     {
-        var borrowRecord = await _borrowRecordRepository.GetByIdAsync(request.BorrowId);
+        var borrowRecord = await _borrowRecordRepository.GetByIdAsync(request.Id);
 
         // The validator ensures the record exists and is active, but a defensive check is good practice.
         if (borrowRecord is null || borrowRecord.ReturnedAt is not null)

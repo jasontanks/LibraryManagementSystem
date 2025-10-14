@@ -10,6 +10,7 @@ namespace LibraryManagement.API.Controllers;
 
 [ApiController]
 [Route("v1/[controller]")]
+[Produces("application/json")]
 public class BooksController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -62,7 +63,7 @@ public class BooksController : ControllerBase
     public async Task<IActionResult> AddBook([FromBody] AddBookCommand command)
     {
         var bookDto = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetBookById), new { id = bookDto.Id }, bookDto);
+        return CreatedAtAction(nameof(GetBookById), new { bookId = bookDto.Id }, bookDto);
     }
 
     [HttpPut("{bookId}")]

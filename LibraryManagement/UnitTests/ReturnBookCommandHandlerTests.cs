@@ -23,9 +23,9 @@ public class ReturnBookCommandHandlerTests
     public async Task Handle_Should_ReturnFalse_WhenBorrowRecordNotFound()
     {
         // Arrange
-        var command = new ReturnBookCommand { BorrowId = Guid.NewGuid() };
+        var command = new ReturnBookCommand { Id = Guid.NewGuid() };
         _mockBorrowRecordRepository
-            .Setup(r => r.GetByIdAsync(command.BorrowId))
+            .Setup(r => r.GetByIdAsync(command.Id))
             .ReturnsAsync((BorrowRecord?)null);
 
         // Act
@@ -40,9 +40,9 @@ public class ReturnBookCommandHandlerTests
     {
         // Arrange
         var borrowRecord = new BorrowRecord { Id = Guid.NewGuid(), ReturnedAt = null };
-        var command = new ReturnBookCommand { BorrowId = borrowRecord.Id };
+        var command = new ReturnBookCommand { Id = borrowRecord.Id };
         _mockBorrowRecordRepository
-            .Setup(r => r.GetByIdAsync(command.BorrowId))
+            .Setup(r => r.GetByIdAsync(command.Id))
             .ReturnsAsync(borrowRecord);
 
         // Act

@@ -12,7 +12,7 @@ public class ReturnBookCommandValidator : AbstractValidator<ReturnBookCommand>
     {
         _borrowRecordRepository = borrowRecordRepository;
 
-        RuleFor(x => x.BorrowId)
+        RuleFor(x => x.Id)
             .NotEmpty()
             .MustAsync(MustBeAnActiveBorrowRecord).WithMessage("Borrow record not found or book has already been returned.");
     }

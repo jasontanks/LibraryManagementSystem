@@ -10,6 +10,7 @@ namespace LibraryManagement.API.Controllers;
 
 [ApiController]
 [Route("v1/libraries")]
+[Produces("application/json")]
 public class LibraryController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -26,7 +27,7 @@ public class LibraryController : ControllerBase
     public async Task<IActionResult> CreateLibrary([FromBody] CreateLibraryCommand command)
     {
         var libraryDto = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetLibraryById), new { id = libraryDto.Id }, libraryDto);
+        return CreatedAtAction(nameof(GetLibraryById), new { libraryId = libraryDto.Id }, libraryDto);
     }
 
     [HttpGet("{libraryId}")]
