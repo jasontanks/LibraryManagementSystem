@@ -100,7 +100,6 @@ public class MembersController : ControllerBase
     public async Task<IActionResult> DeleteMember(Guid memberId)
     {
         var command = new DeleteMemberCommand(memberId);
-        var command = new DeleteMemberCommand(memberId); // This still works due to parameter name matching
         var result = await _mediator.Send(command);
 
         if (!result)
