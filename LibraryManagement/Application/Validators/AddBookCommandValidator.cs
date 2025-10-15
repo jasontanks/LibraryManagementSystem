@@ -23,6 +23,6 @@ public class AddBookCommandValidator : AbstractValidator<AddBookCommand>
 
     private async Task<bool> LibraryMustExist(Guid libraryId, CancellationToken cancellationToken)
     {
-        return await _libraryRepository.ExistsAsync(libraryId);
+        return await _libraryRepository.GetByIdAsync(libraryId) is not null;
     }
 }

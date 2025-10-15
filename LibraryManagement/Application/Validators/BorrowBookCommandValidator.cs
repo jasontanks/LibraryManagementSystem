@@ -18,7 +18,8 @@ public class BorrowBookCommandValidator : AbstractValidator<BorrowBookCommand>
 
         RuleFor(x => x.BookId)
             .NotEmpty()
-            .MustAsync(BookMustExist).WithMessage("Book not found.");
+            .MustAsync(BookMustExist).WithMessage("Book not found.")
+            .MustAsync(BookMustBeAvailable).WithMessage("Book is already borrowed.");
 
         RuleFor(x => x.MemberId)
             .NotEmpty()
@@ -33,5 +34,10 @@ public class BorrowBookCommandValidator : AbstractValidator<BorrowBookCommand>
     private async Task<bool> MemberMustExist(Guid memberId, CancellationToken cancellationToken)
     {
         return await _memberRepository.GetByIdAsync(memberId) is not null;
+    }
+
+    private async Task<bool> BookMustBeAvailable(Guid bookId, CancellationToken cancellationToken)
+    {
+        return await _borrowRecordRepository.GetActiveBorrowRecordForBookAsync(bookId) is null;
     }
 }

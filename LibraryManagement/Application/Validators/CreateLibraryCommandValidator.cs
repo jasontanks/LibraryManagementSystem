@@ -7,7 +7,10 @@ public class CreateLibraryCommandValidator : AbstractValidator<CreateLibraryComm
 {
     public CreateLibraryCommandValidator()
     {
-        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.BranchLocation).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Library name is required.");
+
+        RuleFor(x => x.BranchLocation)
+            .NotEmpty().WithMessage("Branch location is required.");
     }
 }
