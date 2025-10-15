@@ -6,6 +6,7 @@ using LibraryManagement.Domain.Entities;
 using LibraryManagement.Domain.Interfaces;
 using FluentAssertions;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace UnitTests.Application.Libraries.Queries;
@@ -13,12 +14,14 @@ namespace UnitTests.Application.Libraries.Queries;
 public class GetLibraryByIdQueryHandlerTests
 {
     private readonly Mock<ILibraryRepository> _libraryRepositoryMock;
+    private readonly Mock<ILogger<GetLibraryByIdQueryHandler>> _loggerMock;
     private readonly GetLibraryByIdQueryHandler _handler;
 
     public GetLibraryByIdQueryHandlerTests()
     {
         _libraryRepositoryMock = new Mock<ILibraryRepository>();
-        _handler = new GetLibraryByIdQueryHandler(_libraryRepositoryMock.Object);
+        _loggerMock = new Mock<ILogger<GetLibraryByIdQueryHandler>>();
+        _handler = new GetLibraryByIdQueryHandler(_libraryRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]

@@ -5,19 +5,22 @@ using LibraryManagement.Domain.Entities;
 using LibraryManagement.Domain.Interfaces;
 using FluentAssertions;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace UnitTests.Application.Libraries.Commands;
+namespace LibraryManagement.Application.UnitTests.Handlers;
 
 public class UpdateLibraryCommandHandlerTests
 {
     private readonly Mock<ILibraryRepository> _libraryRepositoryMock;
+    private readonly Mock<ILogger<UpdateLibraryCommandHandler>> _loggerMock;
     private readonly UpdateLibraryCommandHandler _handler;
 
     public UpdateLibraryCommandHandlerTests()
     {
         _libraryRepositoryMock = new Mock<ILibraryRepository>();
-        _handler = new UpdateLibraryCommandHandler(_libraryRepositoryMock.Object);
+        _loggerMock = new Mock<ILogger<UpdateLibraryCommandHandler>>();
+        _handler = new UpdateLibraryCommandHandler(_libraryRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]

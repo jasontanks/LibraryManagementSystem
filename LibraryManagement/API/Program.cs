@@ -3,10 +3,16 @@ using FluentValidation.AspNetCore;
 using LibraryManagement.API.Middleware;
 using LibraryManagement.Application.Behaviours;
 using LibraryManagement.Application.Commands;
+using LibraryManagement.Application.Interfaces;
+using LibraryManagement.API.Services;
 using LibraryManagement.Domain.Interfaces;
 using LibraryManagement.Infrastructure.EF;
 using LibraryManagement.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +22,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("LibraryDb"));
 
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
+    };
+});
+
 // Register Repositories
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<ILibraryRepository, LibraryRepository>();
 builder.Services.AddScoped<IBorrowRecordRepository, BorrowRecordRepository>();
+builder.Services.AddScoped<IJwtTokenGenerator, AuthService>();
 
 // Register MediatR
 builder.Services.AddMediatR(cfg =>
@@ -39,6 +66,29 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 var app = builder.Build();
@@ -58,6 +108,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

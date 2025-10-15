@@ -5,19 +5,22 @@ using LibraryManagement.Domain.Entities;
 using LibraryManagement.Domain.Interfaces;
 using FluentAssertions;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace UnitTests.Application.Libraries.Commands;
+namespace LibraryManagement.Application.UnitTests.Handlers;
 
 public class DeleteLibraryCommandHandlerTests
 {
     private readonly Mock<ILibraryRepository> _libraryRepositoryMock;
+    private readonly Mock<ILogger<DeleteLibraryCommandHandler>> _loggerMock;
     private readonly DeleteLibraryCommandHandler _handler;
 
     public DeleteLibraryCommandHandlerTests()
     {
         _libraryRepositoryMock = new Mock<ILibraryRepository>();
-        _handler = new DeleteLibraryCommandHandler(_libraryRepositoryMock.Object);
+        _loggerMock = new Mock<ILogger<DeleteLibraryCommandHandler>>();
+        _handler = new DeleteLibraryCommandHandler(_libraryRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -34,7 +37,7 @@ public class DeleteLibraryCommandHandlerTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        _libraryRepositoryMock.Verify(repo => repo.Delete(library), Times.Once);
+        _libraryRepositoryMock.Verify(repo => repo.Delete(It.Is<Library>(l => l.Id == command.Id)), Times.Once);
         _libraryRepositoryMock.Verify(repo => repo.SaveChangesAsync(), Times.Once);
         result.Should().Be(true);
     }

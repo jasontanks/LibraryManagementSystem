@@ -5,19 +5,22 @@ using LibraryManagement.Domain.Entities;
 using LibraryManagement.Domain.Interfaces;
 using FluentAssertions;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
-namespace UnitTests.Application.Libraries.Commands;
+namespace LibraryManagement.Application.UnitTests.Handlers;
 
 public class CreateLibraryCommandHandlerTests
 {
     private readonly Mock<ILibraryRepository> _libraryRepositoryMock;
+    private readonly Mock<ILogger<CreateLibraryCommandHandler>> _loggerMock;
     private readonly CreateLibraryCommandHandler _handler;
 
     public CreateLibraryCommandHandlerTests()
     {
         _libraryRepositoryMock = new Mock<ILibraryRepository>();
-        _handler = new CreateLibraryCommandHandler(_libraryRepositoryMock.Object);
+        _loggerMock = new Mock<ILogger<CreateLibraryCommandHandler>>();
+        _handler = new CreateLibraryCommandHandler(_libraryRepositoryMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -25,6 +28,7 @@ public class CreateLibraryCommandHandlerTests
     {
         // Arrange
         var command = new CreateLibraryCommand { Name = "Central Library", BranchLocation = "Downtown" };
+        _libraryRepositoryMock.Setup(repo => repo.SaveChangesAsync()).ReturnsAsync(true);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);

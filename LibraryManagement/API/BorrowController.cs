@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using LibraryManagement.Application.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryManagement.API.Controllers;
 
 [ApiController]
 [Route("v1/borrow")]
+[Authorize]
 [Produces("application/json")]
 public class BorrowController : ControllerBase
 {

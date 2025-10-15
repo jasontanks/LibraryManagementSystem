@@ -4,6 +4,7 @@ using LibraryManagement.Application.Handlers;
 using LibraryManagement.Domain.Entities;
 using LibraryManagement.Domain.Interfaces;
 using Moq;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace LibraryManagement.Application.UnitTests.Handlers;
@@ -11,12 +12,14 @@ namespace LibraryManagement.Application.UnitTests.Handlers;
 public class UpdateBookCommandHandlerTests
 {
     private readonly Mock<IBookRepository> _mockBookRepository;
+    private readonly Mock<ILogger<UpdateBookCommandHandler>> _loggerMock;
     private readonly UpdateBookCommandHandler _handler;
 
     public UpdateBookCommandHandlerTests()
     {
         _mockBookRepository = new Mock<IBookRepository>();
-        _handler = new UpdateBookCommandHandler(_mockBookRepository.Object);
+        _loggerMock = new Mock<ILogger<UpdateBookCommandHandler>>();
+        _handler = new UpdateBookCommandHandler(_mockBookRepository.Object, _loggerMock.Object);
     }
 
     [Fact]
